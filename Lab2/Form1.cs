@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -16,7 +17,11 @@ namespace Lab2
 
 		private void BtnImport_Click(object sender, EventArgs e)
 		{
-			if (File.Exists(TextFilePath.Text))
+			ClearListBoxes();
+            LblLoadedLines.Text = "Jakub Bromber i Kacper Kowalski          Liczba załadowanych linii danych: \" + loadedLinesCount";
+
+
+            if (File.Exists(TextFilePath.Text))
 			{
 				ReadFile(TextFilePath.Text);
 			}
@@ -27,9 +32,22 @@ namespace Lab2
 			}
 		}
 
+		private void ClearListBoxes()
+		{
+            ListBox1.Items.Clear();
+            ListBox2.Items.Clear();
+            ListBox3.Items.Clear();
+            ListBox4.Items.Clear();
+            ListBox5.Items.Clear();
+            ListBox6.Items.Clear();
+            ListBox7.Items.Clear();
+        }
+
 		private void ReadFile(string filePath)
 		{
-			SuspendListBoxesUpdate();
+            int loadedLinesCount = 0;
+
+            SuspendListBoxesUpdate();
 
 			using (var sr = new StreamReader(filePath))
 			{
@@ -38,32 +56,69 @@ namespace Lab2
 				while ((fileLine = sr.ReadLine()) != null)
 				{
 					ListBox1.Items.Add(fileLine);
-					ProcessLine(fileLine);
-				}
+                    if (ProcessLine(fileLine))
+                    {
+                        loadedLinesCount++;
+                    }
+                }
 			}
 			ResumeListBoxesUpdate();
-		}
+            LblLoadedLines.Text = "Jakub Bromber i Kacper Kowalski          Liczba załadowanych linii danych: " + loadedLinesCount;
+        }
 
-		private void ProcessLine(string fileLine)
+        private bool ProcessLine(string fileLine)
+        {
+            if (fileLine.StartsWith("type"))
+            {
+                return false;
+            }
+
+            int commaCount = 0;
+            foreach (char c in fileLine)
+            {
+                if (c == ',')
+                {
+                    commaCount++;
+                }
+            }
+
+            if (commaCount != 5)
+            {
+                return false;
+            }
+
+            string typ = ReadElement(ref fileLine);
+            string data = ReadElement(ref fileLine);
+            string czas = ReadElement(ref fileLine);
+            string adresWe = ReadElement(ref fileLine);
+            string adresWy = ReadElement(ref fileLine);
+            string protokol = ReadElement(ref fileLine);
+
+            ListBox2.Items.Add(typ);
+            ListBox3.Items.Add(data);
+            ListBox4.Items.Add(czas);
+            ListBox5.Items.Add(adresWe);
+            ListBox6.Items.Add(adresWy);
+            ListBox7.Items.Add(protokol);
+
+            return true;
+        }
+
+        private string ReadElement(ref string line)
 		{
-			if (fileLine.StartsWith("type"))
+			int commaIndex = line.IndexOf(',');
+
+			if (commaIndex == -1)
 			{
-				return;
+				string element = line;
+				line = "";
+				return element;
 			}
 
-			string[] elements = fileLine.Split(',');
+			string result = line.Substring(0, commaIndex);
+			line = line.Substring(commaIndex+1);
 
-			if (elements.Length != 6)
-			{
-				return;
-			}
-
-			ListBox2.Items.Add(elements[0]);
-			ListBox3.Items.Add(elements[1]);
-			ListBox4.Items.Add(elements[2]);
-			ListBox5.Items.Add(elements[3]);
-			ListBox6.Items.Add(elements[4]);
-			ListBox7.Items.Add(elements[5]);
+			return result;
 		}
 
 		private void SuspendListBoxesUpdate()
@@ -88,8 +143,26 @@ namespace Lab2
 			ListBox7.EndUpdate();
 		}
 
-		private void BtnBrowse_Click(object sender, EventArgs e)
-		{
-		}
-	}
+        private void BtnBrowse_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Title = "Wybierz plik do odczytu";
+                openFileDialog.Filter = "Pliki tekstowe (*.txt)|*.txt|Wszystkie pliki (*.*)|*.*";
+                openFileDialog.FileName = "";
+                openFileDialog.CheckFileExists = true;
+                openFileDialog.CheckPathExists = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    TextFilePath.Text = openFileDialog.FileName;
+                }
+            }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
 }
