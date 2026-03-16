@@ -41,23 +41,26 @@
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.LblLoadedLines = new System.Windows.Forms.Label();
 			this.BtnAbout = new System.Windows.Forms.Button();
+			this.BtnBrowseFolder = new System.Windows.Forms.Button();
+			this.BtnImportFolder = new System.Windows.Forms.Button();
+			this.FolderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
 			this.SuspendLayout();
 			// 
 			// TextFilePath
 			// 
-			this.TextFilePath.Location = new System.Drawing.Point(100, 18);
-			this.TextFilePath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.TextFilePath.Location = new System.Drawing.Point(461, 22);
+			this.TextFilePath.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.TextFilePath.Name = "TextFilePath";
-			this.TextFilePath.Size = new System.Drawing.Size(398, 20);
+			this.TextFilePath.Size = new System.Drawing.Size(529, 22);
 			this.TextFilePath.TabIndex = 0;
 			this.TextFilePath.Text = "provide a file path here";
 			// 
 			// BtnImport
 			// 
-			this.BtnImport.Location = new System.Drawing.Point(521, 10);
-			this.BtnImport.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.BtnImport.Location = new System.Drawing.Point(311, 11);
+			this.BtnImport.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.BtnImport.Name = "BtnImport";
-			this.BtnImport.Size = new System.Drawing.Size(70, 35);
+			this.BtnImport.Size = new System.Drawing.Size(75, 43);
 			this.BtnImport.TabIndex = 1;
 			this.BtnImport.Text = "Read File";
 			this.BtnImport.UseVisualStyleBackColor = true;
@@ -65,10 +68,10 @@
 			// 
 			// BtnBrowse
 			// 
-			this.BtnBrowse.Location = new System.Drawing.Point(9, 10);
-			this.BtnBrowse.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.BtnBrowse.Location = new System.Drawing.Point(215, 11);
+			this.BtnBrowse.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.BtnBrowse.Name = "BtnBrowse";
-			this.BtnBrowse.Size = new System.Drawing.Size(56, 35);
+			this.BtnBrowse.Size = new System.Drawing.Size(75, 43);
 			this.BtnBrowse.TabIndex = 2;
 			this.BtnBrowse.Text = "File";
 			this.BtnBrowse.UseVisualStyleBackColor = true;
@@ -77,71 +80,78 @@
 			// ListBox1
 			// 
 			this.ListBox1.FormattingEnabled = true;
-			this.ListBox1.Location = new System.Drawing.Point(-2, 61);
-			this.ListBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.ListBox1.ItemHeight = 16;
+			this.ListBox1.Location = new System.Drawing.Point(13, 70);
+			this.ListBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.ListBox1.Name = "ListBox1";
 			this.ListBox1.ScrollAlwaysVisible = true;
-			this.ListBox1.Size = new System.Drawing.Size(600, 147);
+			this.ListBox1.Size = new System.Drawing.Size(1357, 180);
 			this.ListBox1.TabIndex = 6;
 			// 
 			// ListBox2
 			// 
 			this.ListBox2.FormattingEnabled = true;
-			this.ListBox2.Location = new System.Drawing.Point(-2, 220);
-			this.ListBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.ListBox2.ItemHeight = 16;
+			this.ListBox2.Location = new System.Drawing.Point(13, 268);
+			this.ListBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.ListBox2.Name = "ListBox2";
 			this.ListBox2.ScrollAlwaysVisible = true;
-			this.ListBox2.Size = new System.Drawing.Size(72, 147);
+			this.ListBox2.Size = new System.Drawing.Size(218, 180);
 			this.ListBox2.TabIndex = 7;
 			// 
 			// ListBox3
 			// 
 			this.ListBox3.FormattingEnabled = true;
-			this.ListBox3.Location = new System.Drawing.Point(74, 220);
-			this.ListBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.ListBox3.ItemHeight = 16;
+			this.ListBox3.Location = new System.Drawing.Point(237, 268);
+			this.ListBox3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.ListBox3.Name = "ListBox3";
 			this.ListBox3.ScrollAlwaysVisible = true;
-			this.ListBox3.Size = new System.Drawing.Size(72, 147);
+			this.ListBox3.Size = new System.Drawing.Size(218, 180);
 			this.ListBox3.TabIndex = 8;
 			// 
 			// ListBox4
 			// 
 			this.ListBox4.FormattingEnabled = true;
-			this.ListBox4.Location = new System.Drawing.Point(150, 220);
-			this.ListBox4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.ListBox4.ItemHeight = 16;
+			this.ListBox4.Location = new System.Drawing.Point(461, 268);
+			this.ListBox4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.ListBox4.Name = "ListBox4";
 			this.ListBox4.ScrollAlwaysVisible = true;
-			this.ListBox4.Size = new System.Drawing.Size(72, 147);
+			this.ListBox4.Size = new System.Drawing.Size(218, 180);
 			this.ListBox4.TabIndex = 9;
 			// 
 			// ListBox5
 			// 
 			this.ListBox5.FormattingEnabled = true;
-			this.ListBox5.Location = new System.Drawing.Point(226, 220);
-			this.ListBox5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.ListBox5.ItemHeight = 16;
+			this.ListBox5.Location = new System.Drawing.Point(685, 268);
+			this.ListBox5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.ListBox5.Name = "ListBox5";
 			this.ListBox5.ScrollAlwaysVisible = true;
-			this.ListBox5.Size = new System.Drawing.Size(72, 147);
+			this.ListBox5.Size = new System.Drawing.Size(218, 180);
 			this.ListBox5.TabIndex = 10;
 			// 
 			// ListBox6
 			// 
 			this.ListBox6.FormattingEnabled = true;
-			this.ListBox6.Location = new System.Drawing.Point(302, 220);
-			this.ListBox6.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.ListBox6.ItemHeight = 16;
+			this.ListBox6.Location = new System.Drawing.Point(909, 268);
+			this.ListBox6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.ListBox6.Name = "ListBox6";
 			this.ListBox6.ScrollAlwaysVisible = true;
-			this.ListBox6.Size = new System.Drawing.Size(72, 147);
+			this.ListBox6.Size = new System.Drawing.Size(218, 180);
 			this.ListBox6.TabIndex = 11;
 			// 
 			// ListBox7
 			// 
 			this.ListBox7.FormattingEnabled = true;
-			this.ListBox7.Location = new System.Drawing.Point(386, 220);
-			this.ListBox7.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.ListBox7.ItemHeight = 16;
+			this.ListBox7.Location = new System.Drawing.Point(1133, 268);
+			this.ListBox7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.ListBox7.Name = "ListBox7";
 			this.ListBox7.ScrollAlwaysVisible = true;
-			this.ListBox7.Size = new System.Drawing.Size(72, 147);
+			this.ListBox7.Size = new System.Drawing.Size(218, 180);
 			this.ListBox7.TabIndex = 12;
 			// 
 			// openFileDialog1
@@ -151,29 +161,52 @@
 			// LblLoadedLines
 			// 
 			this.LblLoadedLines.AutoSize = true;
-			this.LblLoadedLines.Location = new System.Drawing.Point(6, 370);
+			this.LblLoadedLines.Location = new System.Drawing.Point(8, 455);
+			this.LblLoadedLines.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.LblLoadedLines.Name = "LblLoadedLines";
-			this.LblLoadedLines.Size = new System.Drawing.Size(178, 13);
+			this.LblLoadedLines.Size = new System.Drawing.Size(247, 16);
 			this.LblLoadedLines.TabIndex = 13;
 			this.LblLoadedLines.Tag = "LblLoadedLines";
-			this.LblLoadedLines.Text = "Liczba załadowanych linii danych: 0";
-			this.LblLoadedLines.Click += new System.EventHandler(this.label1_Click);
+			this.LblLoadedLines.Text = "The number of loaded file lines of data: 0";
 			// 
 			// BtnAbout
 			// 
-			this.BtnAbout.Location = new System.Drawing.Point(491, 359);
+			this.BtnAbout.Location = new System.Drawing.Point(-1, 0);
+			this.BtnAbout.Margin = new System.Windows.Forms.Padding(4);
 			this.BtnAbout.Name = "BtnAbout";
-			this.BtnAbout.Size = new System.Drawing.Size(100, 25);
+			this.BtnAbout.Size = new System.Drawing.Size(133, 31);
 			this.BtnAbout.TabIndex = 14;
-			this.BtnAbout.Text = "O programie";
+			this.BtnAbout.Text = "About";
 			this.BtnAbout.UseVisualStyleBackColor = true;
 			this.BtnAbout.Click += new System.EventHandler(this.BtnAbout_Click);
 			// 
+			// BtnBrowseFolder
+			// 
+			this.BtnBrowseFolder.Location = new System.Drawing.Point(1052, 15);
+			this.BtnBrowseFolder.Name = "BtnBrowseFolder";
+			this.BtnBrowseFolder.Size = new System.Drawing.Size(75, 39);
+			this.BtnBrowseFolder.TabIndex = 15;
+			this.BtnBrowseFolder.Text = "Folder";
+			this.BtnBrowseFolder.UseVisualStyleBackColor = true;
+			this.BtnBrowseFolder.Click += new System.EventHandler(this.BtnBrowseFolder_Click);
+			// 
+			// BtnImportFolder
+			// 
+			this.BtnImportFolder.Location = new System.Drawing.Point(1152, 15);
+			this.BtnImportFolder.Name = "BtnImportFolder";
+			this.BtnImportFolder.Size = new System.Drawing.Size(102, 39);
+			this.BtnImportFolder.TabIndex = 16;
+			this.BtnImportFolder.Text = "Read All Files";
+			this.BtnImportFolder.UseVisualStyleBackColor = true;
+			this.BtnImportFolder.Click += new System.EventHandler(this.BtnImportFolder_Click);
+			// 
 			// Form1
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(600, 392);
+			this.ClientSize = new System.Drawing.Size(1382, 482);
+			this.Controls.Add(this.BtnImportFolder);
+			this.Controls.Add(this.BtnBrowseFolder);
 			this.Controls.Add(this.BtnAbout);
 			this.Controls.Add(this.LblLoadedLines);
 			this.Controls.Add(this.ListBox7);
@@ -186,7 +219,7 @@
 			this.Controls.Add(this.BtnBrowse);
 			this.Controls.Add(this.BtnImport);
 			this.Controls.Add(this.TextFilePath);
-			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.Name = "Form1";
 			this.Text = "Form1";
 			this.ResumeLayout(false);
@@ -209,5 +242,8 @@
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private System.Windows.Forms.Label LblLoadedLines;
 		private System.Windows.Forms.Button BtnAbout;
+		private System.Windows.Forms.Button BtnBrowseFolder;
+		private System.Windows.Forms.Button BtnImportFolder;
+		private System.Windows.Forms.FolderBrowserDialog FolderBrowserDialog1;
 	}
 }

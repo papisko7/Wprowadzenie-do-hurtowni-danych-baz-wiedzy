@@ -1,171 +1,170 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Lab2
 {
 	public partial class Form1 : Form
 	{
-		private const string FILE_PATH = @"D:\ddata\ZALog2007.06.16.txt";
+		private const string DefaultFilePath = @"C:\Users\kacperkowalski\Downloads\db_small";
 
-		public Form1()
+		private readonly ILogProcessor _logProcessor;
+		private readonly IDialogService _dialogService;
+		private readonly BackgroundWorker _bw;
+		private readonly ListBox[] _listBoxes;
+
+		public Form1(ILogProcessor logProcessor, IDialogService dialogService)
 		{
 			InitializeComponent();
-			TextFilePath.Text = FILE_PATH;
+
+			_logProcessor = logProcessor ??
+							throw new ArgumentNullException(nameof(logProcessor));
+			_dialogService = dialogService ??
+							 throw new ArgumentNullException(nameof(dialogService));
+
+			_listBoxes = new[]
+			{
+				ListBox1,
+				ListBox2,
+				ListBox3,
+				ListBox4,
+				ListBox5,
+				ListBox6,
+				ListBox7
+			};
+
+			TextFilePath.Text = DefaultFilePath;
+
+			_bw = new BackgroundWorker();
+			_bw.DoWork += Bw_DoWork;
+			_bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
 		}
 
 		private void BtnImport_Click(object sender, EventArgs e)
 		{
 			ClearListBoxes();
-			LblLoadedLines.Text = "Liczba załadowanych linii danych: 0";
+			LblLoadedLines.Text = @"The number of loaded file lines of data: 0";
 
-			if (File.Exists(TextFilePath.Text))
+			string filePath = TextFilePath.Text;
+
+			if (File.Exists(filePath))
 			{
-				ReadFile(TextFilePath.Text);
+				ParsedLogData result = _logProcessor.ProcessFile(filePath);
+				PopulateListBoxes(result);
+				LblLoadedLines.Text = $@"The number of loaded file lines of data: {result.ValidEntries.Count}";
 			}
 			else
 			{
-				MessageBox.Show(@"Choose a correct text file.",
-					@"File not found", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				_dialogService.ShowError(@"Choose a correct text file.",
+					@"File not found");
 			}
+		}
+
+		private void BtnImportFolder_Click(object sender, EventArgs e)
+		{
+			var folderPath = TextFilePath.Text;
+
+			if (Directory.Exists(folderPath))
+			{
+				ClearListBoxes();
+				BtnImportFolder.Enabled = false;
+				LblLoadedLines.Text = @"Files are being loaded from the folder in the background...";
+
+				_bw.RunWorkerAsync(folderPath);
+			}
+			else
+			{
+				_dialogService.ShowError(@"Choose a correct folder.", @"Error");
+			}
+		}
+
+		private void Bw_DoWork(object sender, DoWorkEventArgs e)
+		{
+			var path = (string)e.Argument;
+			e.Result = _logProcessor.ProcessDirectory(path);
+		}
+
+		private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			if (e.Result is ParsedLogData result)
+			{
+				PopulateListBoxes(result);
+				LblLoadedLines.Text = $@"Number of loaded lines of data: {result.ValidEntries.Count}";
+				_dialogService.ShowInfo(
+					@"The process of reading all files from the selected folder has been completed!",
+					@"Success");
+			}
+
+			BtnImportFolder.Enabled = true;
+		}
+
+		private void PopulateListBoxes(ParsedLogData data)
+		{
+			SuspendListBoxesUpdate();
+
+			ListBox1.Items.AddRange(data.AllLines.ToArray());
+			ListBox2.Items.AddRange(data.ValidEntries.Select(entry => entry.Type).ToArray());
+			ListBox3.Items.AddRange(data.ValidEntries.Select(entry => entry.Date).ToArray());
+			ListBox4.Items.AddRange(data.ValidEntries.Select(entry => entry.Time).ToArray());
+			ListBox5.Items.AddRange(data.ValidEntries.Select(entry => entry.AddressIn).ToArray());
+			ListBox6.Items.AddRange(data.ValidEntries.Select(entry => entry.AddressOut).ToArray());
+			ListBox7.Items.AddRange(data.ValidEntries.Select(entry => entry.Protocol).ToArray());
+
+			ResumeListBoxesUpdate();
 		}
 
 		private void ClearListBoxes()
 		{
-			ListBox1.Items.Clear();
-			ListBox2.Items.Clear();
-			ListBox3.Items.Clear();
-			ListBox4.Items.Clear();
-			ListBox5.Items.Clear();
-			ListBox6.Items.Clear();
-			ListBox7.Items.Clear();
-		}
-
-		private void ReadFile(string filePath)
-		{
-			int loadedLinesCount = 0;
-
-			SuspendListBoxesUpdate();
-
-			using (var sr = new StreamReader(filePath))
+			foreach (var listBox in _listBoxes)
 			{
-				string fileLine;
-
-				while ((fileLine = sr.ReadLine()) != null)
-				{
-					ListBox1.Items.Add(fileLine);
-					if (ProcessLine(fileLine))
-					{
-						loadedLinesCount++;
-					}
-				}
+				listBox.Items.Clear();
 			}
-			ResumeListBoxesUpdate();
-			LblLoadedLines.Text = "Liczba załadowanych linii danych: " + loadedLinesCount;
-		}
-
-		private bool ProcessLine(string fileLine)
-		{
-			if (fileLine.StartsWith("type"))
-			{
-				return false;
-			}
-
-			int commaCount = 0;
-			foreach (char c in fileLine)
-			{
-				if (c == ',')
-				{
-					commaCount++;
-				}
-			}
-
-			if (commaCount != 5)
-			{
-				return false;
-			}
-
-			string typ = ReadElement(ref fileLine);
-			string data = ReadElement(ref fileLine);
-			string czas = ReadElement(ref fileLine);
-			string adresWe = ReadElement(ref fileLine);
-			string adresWy = ReadElement(ref fileLine);
-			string protokol = ReadElement(ref fileLine);
-
-			ListBox2.Items.Add(typ);
-			ListBox3.Items.Add(data);
-			ListBox4.Items.Add(czas);
-			ListBox5.Items.Add(adresWe);
-			ListBox6.Items.Add(adresWy);
-			ListBox7.Items.Add(protokol);
-
-			return true;
-		}
-
-		private string ReadElement(ref string line)
-		{
-			int commaIndex = line.IndexOf(',');
-
-			if (commaIndex == -1)
-			{
-				string element = line;
-				line = "";
-				return element;
-			}
-
-			string result = line.Substring(0, commaIndex);
-			line = line.Substring(commaIndex + 1);
-
-			return result;
 		}
 
 		private void SuspendListBoxesUpdate()
 		{
-			ListBox1.BeginUpdate();
-			ListBox2.BeginUpdate();
-			ListBox3.BeginUpdate();
-			ListBox4.BeginUpdate();
-			ListBox5.BeginUpdate();
-			ListBox6.BeginUpdate();
-			ListBox7.BeginUpdate();
+			foreach (var listBox in _listBoxes)
+			{
+				listBox.BeginUpdate();
+			}
 		}
 
 		private void ResumeListBoxesUpdate()
 		{
-			ListBox1.EndUpdate();
-			ListBox2.EndUpdate();
-			ListBox3.EndUpdate();
-			ListBox4.EndUpdate();
-			ListBox5.EndUpdate();
-			ListBox6.EndUpdate();
-			ListBox7.EndUpdate();
+			foreach (var listBox in _listBoxes)
+			{
+				listBox.EndUpdate();
+			}
 		}
 
 		private void BtnBrowse_Click(object sender, EventArgs e)
 		{
-			using (OpenFileDialog openFileDialog = new OpenFileDialog())
-			{
-				openFileDialog.Title = "Wybierz plik do odczytu";
-				openFileDialog.Filter = "Pliki tekstowe (*.txt)|*.txt|Wszystkie pliki (*.*)|*.*";
-				openFileDialog.FileName = "";
-				openFileDialog.CheckFileExists = true;
-				openFileDialog.CheckPathExists = true;
+			var selectedPath = _dialogService.ShowFileDialog(@"Choose a file to read",
+				@"Text files (*.txt)|*.txt|All files (*.*)|*.*");
 
-				if (openFileDialog.ShowDialog() == DialogResult.OK)
-				{
-					TextFilePath.Text = openFileDialog.FileName;
-				}
+			if (selectedPath != null)
+			{
+				TextFilePath.Text = selectedPath;
 			}
 		}
 
-		private void label1_Click(object sender, EventArgs e)
+		private void BtnBrowseFolder_Click(object sender, EventArgs e)
 		{
-
+			var selectedPath = _dialogService.ShowFolderDialog();
+			if (selectedPath != null)
+			{
+				TextFilePath.Text = selectedPath;
+			}
 		}
 
 		private void BtnAbout_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("Autorzy: Jakub Bromber i Kacper Kowalski\n\nProgram: Lab2 (Analiza logów)", "O programie", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			_dialogService.ShowInfo(
+				@"Authors: Jakub Bromber and Kacper Kowalski" + Environment.NewLine + Environment.NewLine +
+				@"Program: Lab2 (Log analysis)",
+				@"About");
 		}
 	}
 }
