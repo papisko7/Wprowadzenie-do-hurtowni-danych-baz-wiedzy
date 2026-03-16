@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -18,10 +17,9 @@ namespace Lab2
 		private void BtnImport_Click(object sender, EventArgs e)
 		{
 			ClearListBoxes();
-            LblLoadedLines.Text = "Jakub Bromber i Kacper Kowalski          Liczba załadowanych linii danych: \" + loadedLinesCount";
+			LblLoadedLines.Text = "Liczba załadowanych linii danych: 0";
 
-
-            if (File.Exists(TextFilePath.Text))
+			if (File.Exists(TextFilePath.Text))
 			{
 				ReadFile(TextFilePath.Text);
 			}
@@ -34,20 +32,20 @@ namespace Lab2
 
 		private void ClearListBoxes()
 		{
-            ListBox1.Items.Clear();
-            ListBox2.Items.Clear();
-            ListBox3.Items.Clear();
-            ListBox4.Items.Clear();
-            ListBox5.Items.Clear();
-            ListBox6.Items.Clear();
-            ListBox7.Items.Clear();
-        }
+			ListBox1.Items.Clear();
+			ListBox2.Items.Clear();
+			ListBox3.Items.Clear();
+			ListBox4.Items.Clear();
+			ListBox5.Items.Clear();
+			ListBox6.Items.Clear();
+			ListBox7.Items.Clear();
+		}
 
 		private void ReadFile(string filePath)
 		{
-            int loadedLinesCount = 0;
+			int loadedLinesCount = 0;
 
-            SuspendListBoxesUpdate();
+			SuspendListBoxesUpdate();
 
 			using (var sr = new StreamReader(filePath))
 			{
@@ -56,55 +54,55 @@ namespace Lab2
 				while ((fileLine = sr.ReadLine()) != null)
 				{
 					ListBox1.Items.Add(fileLine);
-                    if (ProcessLine(fileLine))
-                    {
-                        loadedLinesCount++;
-                    }
-                }
+					if (ProcessLine(fileLine))
+					{
+						loadedLinesCount++;
+					}
+				}
 			}
 			ResumeListBoxesUpdate();
-            LblLoadedLines.Text = "Jakub Bromber i Kacper Kowalski          Liczba załadowanych linii danych: " + loadedLinesCount;
-        }
+			LblLoadedLines.Text = "Liczba załadowanych linii danych: " + loadedLinesCount;
+		}
 
-        private bool ProcessLine(string fileLine)
-        {
-            if (fileLine.StartsWith("type"))
-            {
-                return false;
-            }
+		private bool ProcessLine(string fileLine)
+		{
+			if (fileLine.StartsWith("type"))
+			{
+				return false;
+			}
 
-            int commaCount = 0;
-            foreach (char c in fileLine)
-            {
-                if (c == ',')
-                {
-                    commaCount++;
-                }
-            }
+			int commaCount = 0;
+			foreach (char c in fileLine)
+			{
+				if (c == ',')
+				{
+					commaCount++;
+				}
+			}
 
-            if (commaCount != 5)
-            {
-                return false;
-            }
+			if (commaCount != 5)
+			{
+				return false;
+			}
 
-            string typ = ReadElement(ref fileLine);
-            string data = ReadElement(ref fileLine);
-            string czas = ReadElement(ref fileLine);
-            string adresWe = ReadElement(ref fileLine);
-            string adresWy = ReadElement(ref fileLine);
-            string protokol = ReadElement(ref fileLine);
+			string typ = ReadElement(ref fileLine);
+			string data = ReadElement(ref fileLine);
+			string czas = ReadElement(ref fileLine);
+			string adresWe = ReadElement(ref fileLine);
+			string adresWy = ReadElement(ref fileLine);
+			string protokol = ReadElement(ref fileLine);
 
-            ListBox2.Items.Add(typ);
-            ListBox3.Items.Add(data);
-            ListBox4.Items.Add(czas);
-            ListBox5.Items.Add(adresWe);
-            ListBox6.Items.Add(adresWy);
-            ListBox7.Items.Add(protokol);
+			ListBox2.Items.Add(typ);
+			ListBox3.Items.Add(data);
+			ListBox4.Items.Add(czas);
+			ListBox5.Items.Add(adresWe);
+			ListBox6.Items.Add(adresWy);
+			ListBox7.Items.Add(protokol);
 
-            return true;
-        }
+			return true;
+		}
 
-        private string ReadElement(ref string line)
+		private string ReadElement(ref string line)
 		{
 			int commaIndex = line.IndexOf(',');
 
@@ -116,7 +114,7 @@ namespace Lab2
 			}
 
 			string result = line.Substring(0, commaIndex);
-			line = line.Substring(commaIndex+1);
+			line = line.Substring(commaIndex + 1);
 
 			return result;
 		}
@@ -143,26 +141,31 @@ namespace Lab2
 			ListBox7.EndUpdate();
 		}
 
-        private void BtnBrowse_Click(object sender, EventArgs e)
-        {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            {
-                openFileDialog.Title = "Wybierz plik do odczytu";
-                openFileDialog.Filter = "Pliki tekstowe (*.txt)|*.txt|Wszystkie pliki (*.*)|*.*";
-                openFileDialog.FileName = "";
-                openFileDialog.CheckFileExists = true;
-                openFileDialog.CheckPathExists = true;
+		private void BtnBrowse_Click(object sender, EventArgs e)
+		{
+			using (OpenFileDialog openFileDialog = new OpenFileDialog())
+			{
+				openFileDialog.Title = "Wybierz plik do odczytu";
+				openFileDialog.Filter = "Pliki tekstowe (*.txt)|*.txt|Wszystkie pliki (*.*)|*.*";
+				openFileDialog.FileName = "";
+				openFileDialog.CheckFileExists = true;
+				openFileDialog.CheckPathExists = true;
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    TextFilePath.Text = openFileDialog.FileName;
-                }
-            }
-        }
+				if (openFileDialog.ShowDialog() == DialogResult.OK)
+				{
+					TextFilePath.Text = openFileDialog.FileName;
+				}
+			}
+		}
 
-        private void label1_Click(object sender, EventArgs e)
-        {
+		private void label1_Click(object sender, EventArgs e)
+		{
 
-        }
-    }
+		}
+
+		private void BtnAbout_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("Autorzy: Jakub Bromber i Kacper Kowalski\n\nProgram: Lab2 (Analiza logów)", "O programie", MessageBoxButtons.OK, MessageBoxIcon.Information);
+		}
+	}
 }
