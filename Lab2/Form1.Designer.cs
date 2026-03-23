@@ -1,4 +1,4 @@
-﻿namespace Lab2
+namespace Lab2
 {
 	partial class Form1
 	{
@@ -164,7 +164,7 @@
 			this.LblLoadedLines.Location = new System.Drawing.Point(8, 455);
 			this.LblLoadedLines.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.LblLoadedLines.Name = "LblLoadedLines";
-			this.LblLoadedLines.Size = new System.Drawing.Size(247, 16);
+			this.LblLoadedLines.Size = new System.Drawing.Size(267, 17);
 			this.LblLoadedLines.TabIndex = 13;
 			this.LblLoadedLines.Tag = "LblLoadedLines";
 			this.LblLoadedLines.Text = "The number of loaded file lines of data: 0";
@@ -224,7 +224,6 @@
 			this.Text = "Form1";
 			this.ResumeLayout(false);
 			this.PerformLayout();
-
 		}
 
 		#endregion

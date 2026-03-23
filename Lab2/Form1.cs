@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,7 +11,6 @@ namespace Lab2
 
 		private readonly ILogProcessor _logProcessor;
 		private readonly IDialogService _dialogService;
-		private readonly BackgroundWorker _bw;
 		private readonly ListBox[] _listBoxes;
 
 		public Form1(ILogProcessor logProcessor, IDialogService dialogService)
@@ -36,10 +34,6 @@ namespace Lab2
 			};
 
 			TextFilePath.Text = DefaultFilePath;
-
-			_bw = new BackgroundWorker();
-			_bw.DoWork += Bw_DoWork;
-			_bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
 		}
 
 		private void BtnImport_Click(object sender, EventArgs e)
@@ -66,37 +60,44 @@ namespace Lab2
 		{
 			var folderPath = TextFilePath.Text;
 
-			if (Directory.Exists(folderPath))
-			{
-				ClearListBoxes();
-				BtnImportFolder.Enabled = false;
-				LblLoadedLines.Text = @"Files are being loaded from the folder in the background...";
-
-				_bw.RunWorkerAsync(folderPath);
-			}
-			else
+			if (!Directory.Exists(folderPath))
 			{
 				_dialogService.ShowError(@"Choose a correct folder.", @"Error");
-			}
-		}
-
-		private void Bw_DoWork(object sender, DoWorkEventArgs e)
-		{
-			var path = (string)e.Argument;
-			e.Result = _logProcessor.ProcessDirectory(path);
-		}
-
-		private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (e.Result is ParsedLogData result)
-			{
-				PopulateListBoxes(result);
-				LblLoadedLines.Text = $@"Number of loaded lines of data: {result.ValidEntries.Count}";
-				_dialogService.ShowInfo(
-					@"The process of reading all files from the selected folder has been completed!",
-					@"Success");
+				return;
 			}
 
+			ClearListBoxes();
+			LblLoadedLines.Text = @"The number of loaded file lines of data: 0";
+			BtnImportFolder.Enabled = false;
+
+			var progressForm = new ProgressForm(folderPath, _logProcessor);
+			progressForm.FileProcessed += ProgressForm_FileProcessed;
+			progressForm.FormClosed += ProgressForm_FormClosed;
+			progressForm.Show(this);
+		}
+
+		private void ProgressForm_FileProcessed(FileProcessedData fileData)
+		{
+			SuspendListBoxesUpdate();
+
+			ListBox1.Items.AddRange(fileData.NewLines.ToArray());
+			ListBox2.Items.AddRange(fileData.NewEntries.Select(entry => entry.Type).ToArray());
+			ListBox3.Items.AddRange(fileData.NewEntries.Select(entry => entry.Date).ToArray());
+			ListBox4.Items.AddRange(fileData.NewEntries.Select(entry => entry.Time).ToArray());
+			ListBox5.Items.AddRange(fileData.NewEntries.Select(entry => entry.AddressIn).ToArray());
+			ListBox6.Items.AddRange(fileData.NewEntries.Select(entry => entry.AddressOut).ToArray());
+			ListBox7.Items.AddRange(fileData.NewEntries.Select(entry => entry.Protocol).ToArray());
+
+			ResumeListBoxesUpdate();
+
+			LblLoadedLines.Text =
+				$@"The number of loaded file lines of data: {ListBox1.Items.Count}";
+		}
+
+		private void ProgressForm_FormClosed(object sender, FormClosedEventArgs e)
+		{
+			var progressForm = (ProgressForm)sender;
+			progressForm.Dispose();
 			BtnImportFolder.Enabled = true;
 		}
 

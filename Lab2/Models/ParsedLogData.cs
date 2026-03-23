@@ -7,5 +7,7 @@ namespace Lab2
 		public List<string> AllLines { get; } = new List<string>();
 
 		public List<LogEntry> ValidEntries { get; } = new List<LogEntry>();
+
+		public List<string> ProcessedFiles { get; } = new List<string>();
 	}
 }
